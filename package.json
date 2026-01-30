@@ -1,0 +1,20 @@
+{
+  "name": "favorcito-mailer",
+  "version": "1.0.0",
+  "description": "Monolith project for Favorcito Mailer",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm run dev --prefix client",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.8.0",
+    "concurrently": "^8.2.2",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "xlsx": "^0.18.5"
+  }
+}
