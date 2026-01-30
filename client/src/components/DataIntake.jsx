@@ -41,8 +41,8 @@ const DataIntake = ({ onComplete }) => {
 
     reader.onload = (event) => {
       try {
-        const binaryStr = event.target.result;
-        const workbook = XLSX.read(binaryStr, { type: 'binary' });
+        const arrayBuffer = event.target.result;
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
@@ -129,7 +129,7 @@ const DataIntake = ({ onComplete }) => {
       setError('Failed to read the file.');
     };
 
-    reader.readAsBinaryString(file);
+    reader.readAsArrayBuffer(file);
   }, [setCsvData, setHeaders, setIsDataDirty]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
