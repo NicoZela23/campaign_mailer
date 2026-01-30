@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
 import DataIntake from './DataIntake';
 import Composer from './Composer';
-import Preview from './Preview';
+import TestMailer from './TestMailer';
 import LiveExecution from './LiveExecution';
 import { AppStateContext } from '../context/AppStateContext';
 import toast from 'react-hot-toast';
 
 const steps = [
   { name: 'Subir Datos', component: DataIntake, icon: '📤' },
-  { name: 'Construccion de Mail', component: Composer, icon: '✍️' },
-  { name: 'Preview & Test', component: Preview, icon: '🔍' },
-  { name: 'Envio', component: LiveExecution, icon: '🚀' },
+    { name: 'Construccion de Mail', component: Composer, icon: '✍️' },
+    { name: 'Testear Correo', component: TestMailer, icon: '🔍' },
+    { name: 'Envio', component: LiveExecution, icon: '🚀' },
 ];
 
 const MainStepper = () => {

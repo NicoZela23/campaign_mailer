@@ -26,7 +26,12 @@ const Composer = ({ onComplete, onBack }) => {
       }
       
       editorRef.current.on('text-change', () => {
-        setEmailTemplate(prev => ({ ...prev, body: editorRef.current.root.innerHTML }));
+        let html = editorRef.current.root.innerHTML;
+        // Convert empty paragraphs to <br> for better newline handling in emails
+        html = html.replace(/<p><br><\/p>/g, '<br>');
+        // Replace <p> tags with <div> to avoid default margins in email clients
+        html = html.replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>');
+        setEmailTemplate(prev => ({ ...prev, body: html }));
       });
     }
   }, []);
@@ -61,8 +66,8 @@ const Composer = ({ onComplete, onBack }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row p-8 gap-8">
-      <div className="grow">
+    <div className="flex flex-col p-8 gap-8">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-4">Construye el email</h2>
         <input 
           type="text"
@@ -72,27 +77,27 @@ const Composer = ({ onComplete, onBack }) => {
           className="w-full px-4 py-2 border rounded-lg mb-4"
         />
         <div ref={quillRef} style={{ height: '400px' }} />
+        <div className="w-full shrink-0 mt-4">
+          <h3 className="text-lg font-semibold mb-2">Variables Disponibles</h3>
+          <div className="bg-gray-100 p-4 rounded-lg overflow-y-auto overflow-x-hidden max-h-64">
+            {headers.map(header => (
+              <button 
+                key={header} 
+                onClick={() => insertVariable(header)}
+                className={`block w-full text-left p-2 mb-2 rounded shadow hover:opacity-80 text-wrap ${isVariableUsed(header) ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+              >
+                {`{{${header}}}`}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center gap-4 mt-4">
-          <button onClick={onBack} className="px-6 py-2 bg-gray-600 text-white rounded-lg">
+          <button onClick={onBack} className="px-6 py-2 bg-red-600 text-white rounded-lg">
             Atras
           </button>
           <button onClick={validateAndProceed} className="px-6 py-2 bg-blue-600 text-white rounded-lg">
             Siguiente
           </button>
-        </div>
-      </div>
-      <div className="w-full md:w-64 shrink-0">
-        <h3 className="text-lg font-semibold mb-2">Variables ingresadas</h3>
-        <div className="bg-gray-100 p-4 rounded-lg">
-          {headers.map(header => (
-            <button 
-              key={header} 
-              onClick={() => insertVariable(header)}
-              className={`block w-full text-left p-2 mb-2 rounded shadow hover:opacity-80 whitespace-normal break-words ${isVariableUsed(header) ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-            >
-              {`{{${header}}}`}
-            </button>
-          ))}
         </div>
       </div>
     </div>
