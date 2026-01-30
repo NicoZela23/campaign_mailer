@@ -12,6 +12,8 @@ const DataIntake = ({ onComplete }) => {
   const [editedData, setEditedData] = useState([]);
   const [validationErrors, setValidationErrors] = useState({}); // { rowIndex: { header: true/false } }
   const [hasNewDataUploaded, setHasNewDataUploaded] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
+  const [isAddingColumn, setIsAddingColumn] = useState(false);
 
   useEffect(() => {
     if (csvData.length > 0) {
@@ -50,7 +52,38 @@ const DataIntake = ({ onComplete }) => {
           return;
         }
         
-        const originalHeaders = Object.keys(json[0]);
+        // This is a new special feature that replaces the empty headers with a more friendly name
+        const processedDataForEmptyHeaders = json.map(row => {
+          const newRow = {};
+          Object.keys(row).forEach(key => {
+            const newKey = key.startsWith('__EMPTY') ? `EMPTY` : key;
+            newRow[newKey] = row[key];
+          });
+          return newRow;
+        });
+
+        // Filter out columns with EMPTY header and no data
+        const headers = Object.keys(processedDataForEmptyHeaders[0]);
+        const emptyHeaders = headers.filter(h => h.startsWith('EMPTY'));
+        const columnsToDelete = [];
+
+        emptyHeaders.forEach(header => {
+          const isColumnEmpty = processedDataForEmptyHeaders.every(row => row[header] === '');
+          if (isColumnEmpty) {
+            columnsToDelete.push(header);
+          }
+        });
+
+        const filteredData = processedDataForEmptyHeaders.map(row => {
+          const newRow = { ...row };
+          columnsToDelete.forEach(header => {
+            delete newRow[header];
+          });
+          return newRow;
+        });
+
+
+        const originalHeaders = Object.keys(filteredData[0]);
         const emailHeaderCandidates = ['email', 'correo', 'mail'];
         const emailHeader = originalHeaders.find(h => emailHeaderCandidates.includes(h.toLowerCase()));
 
@@ -59,7 +92,7 @@ const DataIntake = ({ onComplete }) => {
           return;
         }
 
-        const processedData = json.map(row => {
+        const processedData = filteredData.map(row => {
           const newRow = { email: row[emailHeader] };
           originalHeaders.forEach(header => {
             if (header !== emailHeader) {
@@ -148,6 +181,48 @@ const DataIntake = ({ onComplete }) => {
     });
   };
 
+  const handleAddRow = () => {
+    const newRow = headersToShow.reduce((acc, header) => {
+      acc[header] = '';
+      return acc;
+    }, {});
+    setEditedData([...editedData, newRow]);
+  };
+
+  const handleAddColumn = () => {
+    setIsAddingColumn(true);
+  };
+
+  const handleSaveNewColumn = () => {
+    const trimmedName = newColumnName.trim();
+    if (trimmedName && !headersToShow.includes(trimmedName)) {
+      const newData = editedData.map(row => ({
+        ...row,
+        [trimmedName]: '',
+      }));
+      setEditedData(newData);
+      setNewColumnName('');
+      setIsAddingColumn(false);
+    } else if (!trimmedName) {
+      toast.error('El nombre de la columna no puede estar vacio.');
+    } else {
+      toast.error('La columna ya existe.');
+    }
+  };
+
+  const handleDeleteColumn = (headerToDelete) => {
+    if (headerToDelete === 'email') {
+      toast.error('No se puede borrar la columna de email');
+      return;
+    }
+    const newData = editedData.map(row => {
+      const newRow = { ...row };
+      delete newRow[headerToDelete];
+      return newRow;
+    });
+    setEditedData(newData);
+  };
+
   const hasValidationErrors = Object.values(validationErrors).some(rowErrors => 
     Object.values(rowErrors).some(isInvalid => isInvalid)
   );
@@ -183,7 +258,7 @@ const DataIntake = ({ onComplete }) => {
     return isEmpty || hasError;
   };
 
-  const headersToShow = csvData.length > 0 ? Object.keys(csvData[0]) : [];
+  const headersToShow = editedData.length > 0 ? Object.keys(editedData[0]) : [];
 
   return (
     <div className="p-8">
@@ -214,12 +289,26 @@ const DataIntake = ({ onComplete }) => {
             <div>
               {isEditing ? (
                 <button onClick={handleSaveChanges} className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors ${hasValidationErrors ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={hasValidationErrors}>
-                  Guardar Cambios
+                  Guardar
                 </button>
               ) : (
                 <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
                   Editar
                 </button>
+              )}
+              {isEditing && (
+                <>
+                  <button onClick={handleAddRow} className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors">
+                    + Fila
+                  </button>
+                  <button 
+                    onClick={handleAddColumn} 
+                    className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors"
+                    disabled={isAddingColumn}
+                  >
+                    + Columna
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -227,8 +316,30 @@ const DataIntake = ({ onComplete }) => {
             <table className="min-w-full text-sm">
               <thead className="bg-gray-100 sticky top-0">
                 <tr>
-                  {headersToShow.map(header => <th key={header} className="p-2 text-left font-medium">{header}</th>)}
-                  {isEditing && <th className="p-2 text-left font-medium">Actions</th>}
+                  {headersToShow.map(header => (
+                    <th key={header} className="p-2 text-left font-medium">
+                      {header}
+                      {isEditing && header !== 'email' && (
+                        <button onClick={() => handleDeleteColumn(header)} className="ml-2 text-red-500 hover:text-red-700">
+                          &times;
+                        </button>
+                      )}
+                    </th>
+                  ))}
+                  {isEditing && !isAddingColumn && <th className="p-2 text-left font-medium">Actions</th>}
+                  {isEditing && isAddingColumn && (
+                    <th className="p-2 text-left font-medium">
+                      <input
+                        type="text"
+                        value={newColumnName}
+                        onChange={(e) => setNewColumnName(e.target.value)}
+                        placeholder="Nombre de columna"
+                        className="px-2 py-1 border rounded"
+                      />
+                      <button onClick={handleSaveNewColumn} className="ml-2 text-green-500 hover:text-green-700">💾</button>
+                      <button onClick={() => setIsAddingColumn(false)} className="ml-2 text-red-500 hover:text-red-700">❌</button>
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody className="bg-white">
