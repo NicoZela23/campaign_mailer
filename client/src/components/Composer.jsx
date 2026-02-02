@@ -68,35 +68,85 @@ const Composer = ({ onComplete, onBack }) => {
   return (
     <div className="flex flex-col p-8 gap-8">
       <div className="w-full">
-        <h2 className="text-2xl font-bold mb-4">Construye el email</h2>
-        <input 
-          type="text"
-          placeholder="Asunto"
-          value={emailTemplate.subject}
-          onChange={handleSubjectChange}
-          className="w-full px-4 py-2 border rounded-lg mb-4"
-        />
-        <div ref={quillRef} style={{ height: '400px' }} />
-        <div className="w-full shrink-0 mt-4">
-          <h3 className="text-lg font-semibold mb-2">Variables Disponibles</h3>
-          <div className="bg-gray-100 p-4 rounded-lg overflow-y-auto overflow-x-hidden max-h-64">
-            {headers.map(header => (
-              <button 
-                key={header} 
-                onClick={() => insertVariable(header)}
-                className={`block w-full text-left p-2 mb-2 rounded shadow hover:opacity-80 text-wrap ${isVariableUsed(header) ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-              >
-                {`{{${header}}}`}
-              </button>
-            ))}
+        <div className="mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#01533c] rounded-xl shadow-lg mb-4">
+            <span className="text-white text-2xl">✍️</span>
+          </div>
+          <h2 className="text-3xl font-bold text-[#01533c] mb-2">
+            Construye el Email
+          </h2>
+          <p className="text-gray-500 text-sm">Crea tu plantilla de correo personalizada</p>
+        </div>
+        
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Asunto del Correo
+          </label>
+          <input 
+            type="text"
+            placeholder="Ej: Bienvenido a nuestra campaña"
+            value={emailTemplate.subject}
+            onChange={handleSubjectChange}
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white text-lg"
+          />
+        </div>
+        
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Cuerpo del Mensaje
+          </label>
+          <div className="border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            <div ref={quillRef} style={{ height: '400px', backgroundColor: 'white' }} />
           </div>
         </div>
-        <div className="flex items-center gap-4 mt-4">
-          <button onClick={onBack} className="px-6 py-2 bg-red-600 text-white rounded-lg">
-            Atras
+        
+        <div className="w-full shrink-0 mt-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
+            <span className="mr-2">🔧</span>
+            Variables Disponibles
+          </h3>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-gray-200 overflow-y-auto overflow-x-hidden max-h-64 shadow-inner">
+            {headers.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No hay variables disponibles. Sube datos primero.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {headers.map(header => (
+                  <button 
+                    key={header} 
+                    onClick={() => insertVariable(header)}
+                    className={`text-left p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 text-wrap font-medium ${
+                      isVariableUsed(header) 
+                        ? 'bg-[#01533c] text-white hover:bg-[#014030]' 
+                        : 'bg-white text-gray-700 hover:bg-emerald-50 hover:text-[#01533c] border-2 border-gray-200 hover:border-[#01533c]/50'
+                    }`}
+                    title={isVariableUsed(header) ? 'Variable en uso' : 'Haz clic para insertar'}
+                  >
+                    <span className="font-mono text-sm">{`{{${header}}}`}</span>
+                    {isVariableUsed(header) && (
+                      <span className="ml-2 text-xs">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            💡 Haz clic en una variable para insertarla en el editor
+          </p>
+        </div>
+        
+        <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+          <button 
+            onClick={onBack} 
+            className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 transform hover:-translate-y-0.5"
+          >
+            ← Atrás
           </button>
-          <button onClick={validateAndProceed} className="px-6 py-2 bg-blue-600 text-white rounded-lg">
-            Siguiente
+          <button 
+            onClick={validateAndProceed} 
+            className="px-8 py-3 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+          >
+            Continuar →
           </button>
         </div>
       </div>

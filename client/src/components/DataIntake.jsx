@@ -262,107 +262,171 @@ const DataIntake = ({ onComplete }) => {
 
   return (
     <div className="p-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800">Subir lista de contactos</h2>
-        <p className="text-gray-500 mb-6">Columna email obligatoria</p>
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#01533c] rounded-2xl shadow-lg mb-4">
+          <span className="text-white text-3xl">📤</span>
+        </div>
+        <h2 className="text-3xl font-bold text-[#01533c] mb-2">
+          Subir lista de contactos
+        </h2>
+        <p className="text-gray-500 text-sm">Columna email obligatoria • Formatos: CSV, XLS, XLSX</p>
       </div>
 
       <div
         {...getRootProps()}
-        className={`border-4 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-blue-500 bg-blue-100' : 'border-gray-300 bg-gray-50 hover:border-gray-400'}`}
+        className={`border-3 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all duration-300
+        ${isDragActive 
+          ? 'border-[#01533c] bg-gradient-to-br from-emerald-50 to-green-50 shadow-xl scale-105' 
+          : 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 hover:border-[#01533c]/50 hover:shadow-lg hover:scale-[1.02]'}`}
       >
         <input {...getInputProps()} />
-        <p className="text-2xl mb-2">📤</p>
+        <div className="text-6xl mb-4">📤</div>
         {isDragActive ? (
-          <p className="text-blue-600 font-semibold">Drop the file here!</p>
+          <>
+            <p className="text-[#01533c] font-bold text-xl mb-2">¡Suelta el archivo aquí!</p>
+            <p className="text-[#01533c]/70 text-sm">El archivo se procesará automáticamente</p>
+          </>
         ) : (
-          <p className="text-gray-600">Sube tu Excel o CSV</p>
+          <>
+            <p className="text-gray-700 font-semibold text-lg mb-2">Arrastra y suelta tu archivo</p>
+            <p className="text-gray-500 text-sm">o haz clic para seleccionar</p>
+          </>
         )}
       </div>
-      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+      {error && (
+        <div className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+          <p className="text-red-600 font-medium text-center">{error}</p>
+        </div>
+      )}
       
       {editedData.length > 0 && (
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-lg">Previsualizacion ({editedData.length} filas)</h3>
+        <div className="mt-10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
+              <h3 className="font-bold text-xl text-gray-800 mb-1">
+                Previsualización de Datos
+              </h3>
+              <p className="text-sm text-gray-500">
+                {editedData.length} {editedData.length === 1 ? 'fila' : 'filas'} • {headersToShow.length} {headersToShow.length === 1 ? 'columna' : 'columnas'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
               {isEditing ? (
-                <button onClick={handleSaveChanges} className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors ${hasValidationErrors ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={hasValidationErrors}>
-                  Guardar
+                <button 
+                  onClick={handleSaveChanges} 
+                  className={`px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 ${hasValidationErrors ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                  disabled={hasValidationErrors}
+                >
+                  💾 Guardar Cambios
                 </button>
               ) : (
-                <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors">
-                  Editar
+                <button 
+                  onClick={() => setIsEditing(true)} 
+                  className="px-5 py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 transform hover:-translate-y-0.5"
+                >
+                  ✏️ Editar
                 </button>
               )}
               {isEditing && (
                 <>
-                  <button onClick={handleAddRow} className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors">
-                    + Fila
+                  <button 
+                    onClick={handleAddRow} 
+                    className="px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+                  >
+                    ➕ Fila
                   </button>
                   <button 
                     onClick={handleAddColumn} 
-                    className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors"
+                    className={`px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 ${isAddingColumn ? 'opacity-50 cursor-not-allowed' : ''}`}
                     disabled={isAddingColumn}
                   >
-                    + Columna
+                    ➕ Columna
                   </button>
                 </>
               )}
             </div>
           </div>
-          <div className="overflow-x-auto border rounded-lg" style={{ maxHeight: '400px' }}>
+          <div className="overflow-x-auto border-2 border-gray-200 rounded-xl shadow-lg" style={{ maxHeight: '500px' }}>
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-100 sticky top-0">
+              <thead className="bg-gradient-to-r from-gray-100 to-gray-50 sticky top-0 z-10">
                 <tr>
                   {headersToShow.map(header => (
-                    <th key={header} className="p-2 text-left font-medium">
-                      {header}
-                      {isEditing && header !== 'email' && (
-                        <button onClick={() => handleDeleteColumn(header)} className="ml-2 text-red-500 hover:text-red-700">
-                          &times;
-                        </button>
-                      )}
+                    <th key={header} className="p-3 text-left font-bold text-gray-700 border-b-2 border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <span>{header}</span>
+                        {isEditing && header !== 'email' && (
+                          <button 
+                            onClick={() => handleDeleteColumn(header)} 
+                            className="ml-2 w-6 h-6 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            title="Eliminar columna"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
                     </th>
                   ))}
-                  {isEditing && !isAddingColumn && <th className="p-2 text-left font-medium">Actions</th>}
+                  {isEditing && !isAddingColumn && (
+                    <th className="p-3 text-left font-bold text-gray-700 border-b-2 border-gray-200">Acciones</th>
+                  )}
                   {isEditing && isAddingColumn && (
-                    <th className="p-2 text-left font-medium">
-                      <input
-                        type="text"
-                        value={newColumnName}
-                        onChange={(e) => setNewColumnName(e.target.value)}
-                        placeholder="Nombre de columna"
-                        className="px-2 py-1 border rounded"
-                      />
-                      <button onClick={handleSaveNewColumn} className="ml-2 text-green-500 hover:text-green-700">💾</button>
-                      <button onClick={() => setIsAddingColumn(false)} className="ml-2 text-red-500 hover:text-red-700">❌</button>
+                    <th className="p-3 text-left font-bold text-gray-700 border-b-2 border-gray-200">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={newColumnName}
+                          onChange={(e) => setNewColumnName(e.target.value)}
+                          placeholder="Nombre de columna"
+                          className="px-3 py-1.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          onKeyPress={(e) => e.key === 'Enter' && handleSaveNewColumn()}
+                        />
+                        <button 
+                          onClick={handleSaveNewColumn} 
+                          className="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                          title="Guardar"
+                        >
+                          ✓
+                        </button>
+                        <button 
+                          onClick={() => setIsAddingColumn(false)} 
+                          className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                          title="Cancelar"
+                        >
+                          ×
+                        </button>
+                      </div>
                     </th>
                   )}
                 </tr>
               </thead>
-              <tbody className="bg-white">
+              <tbody className="bg-white divide-y divide-gray-100">
                 {editedData.map((row, i) => (
-                  <tr key={i} className="border-t">
+                  <tr key={i} className={`hover:bg-gray-50 transition-colors ${isCellInvalid(i, 'email', row.email) ? 'bg-red-50' : ''}`}>
                     {headersToShow.map(header => (
-                      <td key={header} className="p-1">
+                      <td key={header} className="p-2">
                         {isEditing ? (
                           <input
                             type="text"
                             value={row[header]}
                             onChange={(e) => handleCellChange(e, i, header)}
-                            className={`w-full px-2 py-1 border rounded ${isCellInvalid(i, header, row[header]) ? 'border-red-500 bg-red-100' : 'border-gray-300'}`}
+                            className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all ${isCellInvalid(i, header, row[header]) 
+                              ? 'border-red-400 bg-red-50 focus:ring-red-500' 
+                              : 'border-gray-300 focus:ring-[#01533c] focus:border-transparent'}`}
                           />
                         ) : (
-                          <span className={`p-1 block truncate ${isCellInvalid(i, header, row[header]) ? 'bg-red-100' : ''}`}>{String(row[header])}</span>
+                          <span className={`p-2 block truncate ${isCellInvalid(i, header, row[header]) ? 'text-red-600 font-medium' : 'text-gray-700'}`}>
+                            {String(row[header])}
+                          </span>
                         )}
                       </td>
                     ))}
                     {isEditing && (
-                      <td className="p-1">
-                        <button onClick={() => handleDeleteRow(i)} className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                          Delete
+                      <td className="p-2">
+                        <button 
+                          onClick={() => handleDeleteRow(i)} 
+                          className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md text-xs font-semibold"
+                        >
+                          Eliminar
                         </button>
                       </td>
                     )}
@@ -371,17 +435,27 @@ const DataIntake = ({ onComplete }) => {
               </tbody>
             </table>
           </div>
-          <div className="text-center mt-6">
+          <div className="text-center mt-8">
             {editedData.length > 0 && hasNewDataUploaded && !isEditing && !hasValidationErrors && (
-              <button onClick={handleProceed} className={`px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors`}>
-                Confirmar
+              <button 
+                onClick={handleProceed} 
+                className="px-10 py-4 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 text-lg"
+              >
+                ✓ Confirmar y Continuar
               </button>
             )}
-            {hasValidationErrors ? (
-              <p className="text-sm text-red-500 mt-2">Ingresa un correo valido antes de continuar</p>
-            ) : isEditing ? (
-              <p className="text-sm text-yellow-600 mt-2">Guarda tus datos antes de continuar</p>
-            ) : null}
+            {hasValidationErrors && (
+              <div className="inline-flex items-center space-x-2 px-4 py-3 bg-red-50 border-2 border-red-200 rounded-xl">
+                <span className="text-red-600 text-lg">⚠️</span>
+                <p className="text-sm text-red-600 font-medium">Corrige los correos inválidos antes de continuar</p>
+              </div>
+            )}
+            {isEditing && !hasValidationErrors && (
+              <div className="inline-flex items-center space-x-2 px-4 py-3 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
+                <span className="text-yellow-600 text-lg">💡</span>
+                <p className="text-sm text-yellow-600 font-medium">Guarda tus cambios antes de continuar</p>
+              </div>
+            )}
           </div>
         </div>
       )}
