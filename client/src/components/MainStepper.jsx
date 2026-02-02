@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import DataIntake from './DataIntake';
 import Composer from './Composer';
 import TestMailer from './TestMailer';
@@ -14,10 +14,47 @@ const steps = [
 ];
 
 const MainStepper = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { resetCampaign, sendingStatus, highestCompletedStep, setHighestCompletedStep, isDataDirty } = useContext(AppStateContext);
+  const { resetCampaign, sendingStatus, highestCompletedStep, setHighestCompletedStep, isDataDirty, csvData, currentCampaignId } = useContext(AppStateContext);
+  
+  // Determine initial step: if CSV data exists and a campaign was loaded, start at composer (step 1)
+  // Otherwise, always start at data intake (step 0) to allow uploading data
+  const initialStep = csvData.length > 0 && currentCampaignId && currentCampaignId !== 'temp' ? 1 : 0;
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const CurrentComponent = steps[currentStep].component;
   const isCompleted = sendingStatus === 'completed';
+  
+  // Track if user explicitly navigated back to step 0
+  const userNavigatedBack = useRef(false);
+  
+  // Update step and highestCompletedStep when campaign is loaded
+  // Only move to composer if CSV data exists, otherwise stay at data intake
+  // Always allow going back to step 0 to upload/edit data
+  useEffect(() => {
+    // Don't interfere if user explicitly navigated back
+    if (userNavigatedBack.current) {
+      userNavigatedBack.current = false;
+      return;
+    }
+    
+    if (currentCampaignId && currentCampaignId !== 'temp') {
+      if (csvData.length > 0) {
+        // If we have CSV data, allow going to composer step
+        // But only if we're currently at step 0 (initial load)
+        if (currentStep === 0) {
+          setCurrentStep(1);
+        }
+        // Set highestCompletedStep to at least 1, but always allow step 0
+        setHighestCompletedStep(Math.max(highestCompletedStep, 1));
+      } else {
+        // If no CSV data, ensure we're at step 0
+        if (currentStep > 0) {
+          setCurrentStep(0);
+        }
+        // Allow step 0, but don't block it
+        setHighestCompletedStep(Math.max(highestCompletedStep, 0));
+      }
+    }
+  }, [csvData, currentCampaignId, currentStep, highestCompletedStep, setHighestCompletedStep]);
 
   // Show toast when campaign is completed
   useEffect(() => {
@@ -58,16 +95,39 @@ const MainStepper = () => {
   
   const handleBackStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      // Mark that user explicitly navigated back
+      userNavigatedBack.current = true;
+      // Always allow going back, especially to step 0 (data intake)
+      const newStep = currentStep - 1;
+      setCurrentStep(newStep);
+      // Update highestCompletedStep to allow navigation back
+      // But don't reduce it below the new step to maintain navigation flexibility
+      setHighestCompletedStep(Math.max(newStep, highestCompletedStep));
     }
   };
 
   const handleStepClick = (index) => {
-    if (isCompleted) return; 
-    if (isDataDirty) {
+    if (isCompleted) return;
+    
+    // Always allow going back to step 0 (data intake) to upload/edit data
+    if (index === 0) {
+      // Mark that user explicitly navigated to step 0
+      userNavigatedBack.current = true;
+      setCurrentStep(0);
+      // Update highestCompletedStep to allow navigation back
+      // But don't reduce it below 0 to maintain navigation flexibility
+      setHighestCompletedStep(Math.max(0, highestCompletedStep));
+      return;
+    }
+    
+    // Only check isDataDirty when trying to ADVANCE (go forward), not when going back
+    // If clicking on a step that's ahead of current step, check for dirty data
+    if (isDataDirty && index > currentStep) {
       toast.error('Por favor, confirma los nuevos datos antes de continuar.');
       return;
     }
+    
+    // Allow navigation to any completed step or current step
     if (index <= highestCompletedStep && sendingStatus !== 'sending') {
       setCurrentStep(index);
     } else {
@@ -84,7 +144,9 @@ const MainStepper = () => {
     if (isCompleted) {
       return 'p-6 rounded-xl border-2 text-center transition-all duration-300 border-gray-200 bg-gray-50 cursor-not-allowed opacity-60';
     }
-    const isClickable = index <= highestCompletedStep && sendingStatus !== 'sending';
+    // Step 0 (data intake) is always clickable to allow uploading/editing data
+    // Other steps are clickable if they're within highestCompletedStep
+    const isClickable = index === 0 || (index <= highestCompletedStep && sendingStatus !== 'sending');
     let baseClasses = 'p-6 rounded-xl border-2 text-center transition-all duration-300 relative overflow-hidden';
     
     if (index < currentStep) {
@@ -154,7 +216,7 @@ const MainStepper = () => {
       </div>
       
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden">
-        <div className="bg-[#01533c] h-1"></div>
+        {!isCompleted && <div className="bg-[#01533c] h-1"></div>}
         <CurrentComponent 
           onComplete={handleNextStep} 
           onBack={handleBackStep}

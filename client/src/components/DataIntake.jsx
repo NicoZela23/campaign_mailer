@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 const emailRegex = /^[\w!#$%&'*+\-\/=?^_`{|}~]+(?:\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/;
 const DataIntake = ({ onComplete }) => {
-  const { csvData, setCsvData, setHeaders, setIsDataDirty } = useContext(AppStateContext);
+  const { csvData, setCsvData, setHeaders, setIsDataDirty, isDataDirty } = useContext(AppStateContext);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState([]);
@@ -14,23 +14,69 @@ const DataIntake = ({ onComplete }) => {
   const [hasNewDataUploaded, setHasNewDataUploaded] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
   const [isAddingColumn, setIsAddingColumn] = useState(false);
+  const previousCsvDataRef = React.useRef(null);
+  const isInitialMount = React.useRef(true);
 
   useEffect(() => {
-    if (csvData.length > 0) {
-      setEditedData(csvData);
-      // Re-validate data when csvData changes
-      const initialValidationErrors = {};
-      csvData.forEach((row, rowIndex) => {
-        Object.keys(row).forEach(header => {
-          if (header === 'email' && !emailRegex.test(String(row[header]).trim())) {
-            if (!initialValidationErrors[rowIndex]) initialValidationErrors[rowIndex] = {};
-            initialValidationErrors[rowIndex][header] = true;
-          }
+    // On initial mount, initialize editedData with csvData if it exists
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (csvData.length > 0) {
+        setEditedData(csvData);
+        previousCsvDataRef.current = JSON.stringify(csvData);
+        
+        // Re-validate data
+        const initialValidationErrors = {};
+        csvData.forEach((row, rowIndex) => {
+          Object.keys(row).forEach(header => {
+            if (header === 'email' && !emailRegex.test(String(row[header]).trim())) {
+              if (!initialValidationErrors[rowIndex]) initialValidationErrors[rowIndex] = {};
+              initialValidationErrors[rowIndex][header] = true;
+            }
+          });
         });
-      });
-      setValidationErrors(initialValidationErrors);
+        setValidationErrors(initialValidationErrors);
+        setIsDataDirty(false);
+      }
+      return;
     }
-  }, [csvData]);
+
+    // Only update if csvData actually changed from outside
+    const currentCsvDataString = JSON.stringify(csvData);
+    
+    if (csvData.length > 0) {
+      // If csvData changed from outside (e.g., returning to this step), sync editedData
+      if (currentCsvDataString !== previousCsvDataRef.current) {
+        setEditedData(csvData);
+        previousCsvDataRef.current = currentCsvDataString;
+        
+        // Re-validate data when csvData changes
+        const initialValidationErrors = {};
+        csvData.forEach((row, rowIndex) => {
+          Object.keys(row).forEach(header => {
+            if (header === 'email' && !emailRegex.test(String(row[header]).trim())) {
+              if (!initialValidationErrors[rowIndex]) initialValidationErrors[rowIndex] = {};
+              initialValidationErrors[rowIndex][header] = true;
+            }
+          });
+        });
+        setValidationErrors(initialValidationErrors);
+        
+        // If returning to this step with already confirmed data, mark as clean
+        // This prevents isDataDirty from blocking navigation when no new changes exist
+        setIsDataDirty(false);
+      }
+    } else {
+      // Only clear if we're sure there's no data (don't clear on re-renders)
+      if (editedData.length > 0 && previousCsvDataRef.current !== '[]') {
+        setEditedData([]);
+        setValidationErrors({});
+        previousCsvDataRef.current = '[]';
+      }
+      setIsDataDirty(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [csvData]); // Only depend on csvData to avoid infinite loops
 
   const onDrop = useCallback((acceptedFiles) => {
     setError('');
@@ -119,6 +165,8 @@ const DataIntake = ({ onComplete }) => {
         setIsEditing(false);
         setHasNewDataUploaded(true); // Data successfully uploaded, show 'Siguiente' button
         setIsDataDirty(true); // Mark data as dirty
+        // Update the ref to track this new data
+        previousCsvDataRef.current = JSON.stringify(processedData);
       } catch (e) {
         setError('Failed to process the file. Please ensure it is a valid CSV or XLSX file.');
         console.error(e);
@@ -201,8 +249,14 @@ const DataIntake = ({ onComplete }) => {
         [trimmedName]: '',
       }));
       setEditedData(newData);
+      
+      // Update headers in context immediately so Composer can see the new variable
+      const newHeaders = [...headersToShow, trimmedName].filter(h => h !== 'email');
+      setHeaders(newHeaders);
+      
       setNewColumnName('');
       setIsAddingColumn(false);
+      toast.success(`Columna "${trimmedName}" agregada. Ya está disponible en el editor de email.`);
     } else if (!trimmedName) {
       toast.error('El nombre de la columna no puede estar vacio.');
     } else {
@@ -221,6 +275,12 @@ const DataIntake = ({ onComplete }) => {
       return newRow;
     });
     setEditedData(newData);
+    
+    // Update headers in context immediately so Composer reflects the change
+    const newHeaders = headersToShow.filter(h => h !== headerToDelete && h !== 'email');
+    setHeaders(newHeaders);
+    
+    toast.success(`Columna "${headerToDelete}" eliminada.`);
   };
 
   const hasValidationErrors = Object.values(validationErrors).some(rowErrors => 
@@ -233,7 +293,17 @@ const DataIntake = ({ onComplete }) => {
       return;
     }
     setCsvData(editedData);
+    
+    // Update headers in context to reflect any column changes
+    const currentHeaders = Object.keys(editedData[0] || {}).filter(h => h !== 'email');
+    setHeaders(currentHeaders);
+    
+    // Update ref to track confirmed data
+    previousCsvDataRef.current = JSON.stringify(editedData);
+    
     setIsEditing(false);
+    setIsDataDirty(false); // Mark as clean after saving
+    toast.success('Cambios guardados');
   };
   
   const handleProceed = () => {
@@ -246,6 +316,14 @@ const DataIntake = ({ onComplete }) => {
       headers.every(header => row[header] !== null && row[header] !== undefined && String(row[header]).trim() !== '')
     );
     setCsvData(validatedData);
+    
+    // Update headers in context to ensure Composer has the latest variables
+    const currentHeaders = Object.keys(validatedData[0] || {}).filter(h => h !== 'email');
+    setHeaders(currentHeaders);
+    
+    // Update ref to track confirmed data
+    previousCsvDataRef.current = JSON.stringify(validatedData);
+    
     toast.success(`${validatedData.length} emails procesados`);
     setHasNewDataUploaded(false); // Hide 'Siguiente' button after proceeding
     setIsDataDirty(false); // Mark data as clean
@@ -436,7 +514,8 @@ const DataIntake = ({ onComplete }) => {
             </table>
           </div>
           <div className="text-center mt-8">
-            {editedData.length > 0 && hasNewDataUploaded && !isEditing && !hasValidationErrors && (
+            {/* Only show "Confirmar y Continuar" button if there are unconfirmed changes (isDataDirty) */}
+            {editedData.length > 0 && !isEditing && !hasValidationErrors && isDataDirty && (
               <button 
                 onClick={handleProceed} 
                 className="px-10 py-4 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 text-lg"

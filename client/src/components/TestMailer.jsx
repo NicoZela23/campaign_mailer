@@ -3,7 +3,7 @@ import { AppStateContext } from '../context/AppStateContext';
 import toast from 'react-hot-toast';
 
 const TestMailer = ({ onComplete, onBack }) => {
-  const { emailTemplate, csvData, currentUser } = useContext(AppStateContext);
+  const { emailTemplate, csvData, currentUser, attachments, cc, bcc } = useContext(AppStateContext);
   const [testEmail, setTestEmail] = useState('');
 
   const handleTestSend = async () => {
@@ -23,6 +23,9 @@ const TestMailer = ({ onComplete, onBack }) => {
           emailTemplate,
           userConfig: currentUser,
           dataRow: csvData.length > 0 ? csvData[0] : {},
+          cc: cc || [],
+          bcc: bcc || [],
+          attachments: attachments || [],
         }),
       });
 

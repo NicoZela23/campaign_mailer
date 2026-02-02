@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AppStateProvider, AppStateContext } from './context/AppStateContext';
 import Auth from './components/Auth';
 import MainStepper from './components/MainStepper';
+import CampaignManager from './components/CampaignManager';
 import Header from './components/Header';
 import { Toaster } from 'react-hot-toast';
 
@@ -16,6 +17,7 @@ const AppContent = () => {
       <main>
         <Routes>
           <Route path="/login" element={!currentUser ? <Auth /> : <Navigate to="/" />} />
+          <Route path="/campaigns" element={currentUser ? <CampaignManager /> : <Navigate to="/login" />} />
           <Route path="/" element={currentUser ? <MainStepper /> : <Navigate to="/login" />} />
         </Routes>
       </main>
