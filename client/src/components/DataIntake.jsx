@@ -16,6 +16,7 @@ const DataIntake = ({ onComplete }) => {
   const [isAddingColumn, setIsAddingColumn] = useState(false);
   const previousCsvDataRef = React.useRef(null);
   const isInitialMount = React.useRef(true);
+  const isUploadingFile = React.useRef(false);
 
   useEffect(() => {
     // On initial mount, initialize editedData with csvData if it exists
@@ -37,11 +38,18 @@ const DataIntake = ({ onComplete }) => {
         });
         setValidationErrors(initialValidationErrors);
         setIsDataDirty(false);
+      } else {
+        previousCsvDataRef.current = '[]';
       }
       return;
     }
 
-    // Only update if csvData actually changed from outside
+    // Don't interfere if we're currently uploading a file
+    if (isUploadingFile.current) {
+      return;
+    }
+
+    // Only update if csvData actually changed from outside (not from file upload)
     const currentCsvDataString = JSON.stringify(csvData);
     
     if (csvData.length > 0) {
@@ -85,6 +93,9 @@ const DataIntake = ({ onComplete }) => {
     const file = acceptedFiles[0];
     const reader = new FileReader();
 
+    // Mark that we're uploading a file to prevent useEffect from interfering
+    isUploadingFile.current = true;
+
     reader.onload = (event) => {
       try {
         const arrayBuffer = event.target.result;
@@ -95,6 +106,7 @@ const DataIntake = ({ onComplete }) => {
 
         if (json.length === 0) {
           setError('The uploaded file is empty or could not be read.');
+          isUploadingFile.current = false;
           return;
         }
         
@@ -135,6 +147,7 @@ const DataIntake = ({ onComplete }) => {
 
         if (!emailHeader) {
           setError('The file must contain a column with email addresses.');
+          isUploadingFile.current = false;
           return;
         }
 
@@ -160,21 +173,32 @@ const DataIntake = ({ onComplete }) => {
 
         const headersForComposer = Object.keys(processedData[0]).filter(h => h !== 'email');
 
+        // Update editedData immediately
+        setEditedData(processedData);
+        // Update the ref BEFORE setting csvData to prevent useEffect from interfering
+        previousCsvDataRef.current = JSON.stringify(processedData);
+        
+        // Now update context
         setCsvData(processedData);
         setHeaders(headersForComposer);
         setIsEditing(false);
         setHasNewDataUploaded(true); // Data successfully uploaded, show 'Siguiente' button
         setIsDataDirty(true); // Mark data as dirty
-        // Update the ref to track this new data
-        previousCsvDataRef.current = JSON.stringify(processedData);
+        
+        // Reset upload flag after a short delay to allow state updates
+        setTimeout(() => {
+          isUploadingFile.current = false;
+        }, 100);
       } catch (e) {
         setError('Failed to process the file. Please ensure it is a valid CSV or XLSX file.');
         console.error(e);
+        isUploadingFile.current = false;
       }
     };
 
     reader.onerror = () => {
       setError('Failed to read the file.');
+      isUploadingFile.current = false;
     };
 
     reader.readAsArrayBuffer(file);
@@ -336,6 +360,32 @@ const DataIntake = ({ onComplete }) => {
     return isEmpty || hasError;
   };
 
+  // Detect duplicate emails
+  const getDuplicateEmails = () => {
+    const emailCounts = {};
+    editedData.forEach((row, index) => {
+      const email = String(row.email || '').trim().toLowerCase();
+      if (email && emailRegex.test(email)) {
+        if (!emailCounts[email]) {
+          emailCounts[email] = [];
+        }
+        emailCounts[email].push(index);
+      }
+    });
+    
+    const duplicates = new Set();
+    Object.values(emailCounts).forEach(indices => {
+      if (indices.length > 1) {
+        indices.forEach(idx => duplicates.add(idx));
+      }
+    });
+    
+    return duplicates;
+  };
+
+  const duplicateEmailIndices = getDuplicateEmails();
+  const isDuplicateEmail = (rowIndex) => duplicateEmailIndices.has(rowIndex);
+
   const headersToShow = editedData.length > 0 ? Object.keys(editedData[0]) : [];
 
   return (
@@ -386,6 +436,11 @@ const DataIntake = ({ onComplete }) => {
               </h3>
               <p className="text-sm text-gray-500">
                 {editedData.length} {editedData.length === 1 ? 'fila' : 'filas'} • {headersToShow.length} {headersToShow.length === 1 ? 'columna' : 'columnas'}
+                {duplicateEmailIndices.size > 0 && (
+                  <span className="ml-2 text-yellow-600 font-semibold">
+                    • ⚠️ {duplicateEmailIndices.size} {duplicateEmailIndices.size === 1 ? 'correo duplicado' : 'correos duplicados'}
+                  </span>
+                )}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -478,26 +533,66 @@ const DataIntake = ({ onComplete }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
-                {editedData.map((row, i) => (
-                  <tr key={i} className={`hover:bg-gray-50 transition-colors ${isCellInvalid(i, 'email', row.email) ? 'bg-red-50' : ''}`}>
-                    {headersToShow.map(header => (
+                {editedData.map((row, i) => {
+                  const hasInvalidEmail = isCellInvalid(i, 'email', row.email);
+                  const hasDuplicateEmail = isDuplicateEmail(i);
+                  
+                  // Determine row background color: red for invalid, yellow for duplicate, default for valid
+                  let rowBgClass = '';
+                  if (hasInvalidEmail) {
+                    rowBgClass = 'bg-red-50';
+                  } else if (hasDuplicateEmail) {
+                    rowBgClass = 'bg-yellow-50';
+                  }
+                  
+                  return (
+                  <tr key={i} className={`hover:bg-gray-50 transition-colors ${rowBgClass}`}>
+                    {headersToShow.map(header => {
+                      const isEmailField = header === 'email';
+                      const isInvalid = isCellInvalid(i, header, row[header]);
+                      const isDuplicate = isEmailField && isDuplicateEmail(i);
+                      
+                      return (
                       <td key={header} className="p-2">
                         {isEditing ? (
-                          <input
-                            type="text"
-                            value={row[header]}
-                            onChange={(e) => handleCellChange(e, i, header)}
-                            className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all ${isCellInvalid(i, header, row[header]) 
-                              ? 'border-red-400 bg-red-50 focus:ring-red-500' 
-                              : 'border-gray-300 focus:ring-[#01533c] focus:border-transparent'}`}
-                          />
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={row[header]}
+                              onChange={(e) => handleCellChange(e, i, header)}
+                              className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all ${
+                                isInvalid
+                                  ? 'border-red-400 bg-red-50 focus:ring-red-500' 
+                                  : isDuplicate
+                                  ? 'border-yellow-400 bg-yellow-50 focus:ring-yellow-500'
+                                  : 'border-gray-300 focus:ring-[#01533c] focus:border-transparent'
+                              }`}
+                            />
+                            {isDuplicate && (
+                              <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-yellow-600 text-xs font-semibold" title="Correo duplicado">
+                                ⚠️
+                              </span>
+                            )}
+                          </div>
                         ) : (
-                          <span className={`p-2 block truncate ${isCellInvalid(i, header, row[header]) ? 'text-red-600 font-medium' : 'text-gray-700'}`}>
+                          <span className={`p-2 block truncate ${
+                            isInvalid 
+                              ? 'text-red-600 font-medium' 
+                              : isDuplicate
+                              ? 'text-yellow-700 font-medium'
+                              : 'text-gray-700'
+                          }`}>
                             {String(row[header])}
+                            {isDuplicate && (
+                              <span className="ml-2 text-yellow-600 text-xs" title="Correo duplicado">
+                                ⚠️ Duplicado
+                              </span>
+                            )}
                           </span>
                         )}
                       </td>
-                    ))}
+                      );
+                    })}
                     {isEditing && (
                       <td className="p-2">
                         <button 
@@ -509,13 +604,17 @@ const DataIntake = ({ onComplete }) => {
                       </td>
                     )}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
           <div className="text-center mt-8">
-            {/* Only show "Confirmar y Continuar" button if there are unconfirmed changes (isDataDirty) */}
-            {editedData.length > 0 && !isEditing && !hasValidationErrors && isDataDirty && (
+            {/* Show "Confirmar y Continuar" button if:
+                1. There are unconfirmed changes (isDataDirty), OR
+                2. Data has been confirmed/saved (not dirty but data exists and matches)
+                This allows users to proceed after saving changes in edit mode */}
+            {editedData.length > 0 && !isEditing && !hasValidationErrors && (
               <button 
                 onClick={handleProceed} 
                 className="px-10 py-4 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 text-lg"

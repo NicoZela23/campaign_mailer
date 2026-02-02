@@ -13,7 +13,8 @@ const Composer = ({ onComplete, onBack }) => {
     setEmailTemplate, 
     saveCampaign, 
     currentCampaignId,
-    savedCampaigns
+    savedCampaigns,
+    csvData
   } = useContext(AppStateContext);
   const quillRef = useRef(null);
   const editorRef = useRef(null);
@@ -235,20 +236,69 @@ const Composer = ({ onComplete, onBack }) => {
   // Extract all variables used in the email template (both subject and body)
   const getUsedVariables = () => {
     const variableRegex = /\{\{([^}]+)\}\}/g;
-    const allText = `${emailTemplate.subject || ''} ${emailTemplate.body || ''}`;
-    const matches = allText.match(variableRegex);
-    if (!matches) return [];
-    // Extract variable names (remove {{ and }}) and remove duplicates
-    const variables = matches.map(match => match.replace(/\{\{|\}\}/g, '').trim());
-    return [...new Set(variables)]; // Remove duplicates
+    // Get text from both subject and body
+    const subjectText = String(emailTemplate.subject || '');
+    const bodyText = String(emailTemplate.body || '');
+    
+    // Combine both texts - regex works even with HTML tags
+    const allText = `${subjectText} ${bodyText}`;
+    
+    // Find all matches using a more robust approach
+    const matches = [];
+    let match;
+    // Reset regex lastIndex to ensure we start from the beginning
+    variableRegex.lastIndex = 0;
+    while ((match = variableRegex.exec(allText)) !== null) {
+      const varName = match[1].trim(); // Extract variable name and trim whitespace
+      if (varName) { // Only add non-empty variable names
+        matches.push(varName);
+      }
+    }
+    
+    // Remove duplicates and return
+    return [...new Set(matches)];
   };
 
   // Find variables that are used but not available in headers
   const getMissingVariables = () => {
     const usedVars = getUsedVariables();
-    return usedVars.filter(varName => !headers.includes(varName));
+    
+    // Get actual headers from CSV data if available, otherwise use headers from context
+    // This ensures we're comparing against the actual CSV columns, not just the headers state
+    let availableHeaders = [];
+    if (csvData && csvData.length > 0) {
+      // Extract headers from actual CSV data (excluding 'email')
+      availableHeaders = Object.keys(csvData[0] || {}).filter(h => h !== 'email');
+    } else {
+      // Fallback to headers from context if no CSV data
+      availableHeaders = Array.isArray(headers) ? headers : [];
+    }
+    
+    // Filter out variables that are not in the available headers
+    const missing = usedVars.filter(varName => {
+      // Check if variable is in headers (case-sensitive comparison)
+      const isMissing = !availableHeaders.includes(varName);
+      return isMissing;
+    });
+    
+    // Always log for debugging when there are used variables
+    if (usedVars.length > 0) {
+      console.log('Variable validation:', {
+        usedVars,
+        availableHeaders,
+        headersFromContext: Array.isArray(headers) ? headers : [],
+        csvDataColumns: csvData && csvData.length > 0 ? Object.keys(csvData[0] || {}).filter(h => h !== 'email') : [],
+        missingVars: missing,
+        csvDataLength: csvData ? csvData.length : 0,
+        emailTemplateSubject: emailTemplate.subject,
+        emailTemplateBodyPreview: emailTemplate.body?.substring(0, 200)
+      });
+    }
+    
+    return missing;
   };
 
+  // Calculate missing variables - this will re-run whenever headers or emailTemplate changes
   const missingVariables = getMissingVariables();
 
   const handleSaveCampaign = async () => {
