@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AppStateContext } from '../context/AppStateContext';
 
 const LiveExecution = ({ onReset }) => {
-  const { csvData, emailTemplate, currentUser, sendingStatus, setSendingStatus } = useContext(AppStateContext);
+  const { csvData, emailTemplate, currentUser, sendingStatus, setSendingStatus, attachments, cc, bcc } = useContext(AppStateContext);
   const [logs, setLogs] = useState([]);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
@@ -44,6 +44,9 @@ const LiveExecution = ({ onReset }) => {
             userConfig: currentUser,
             csvData,
             emailTemplate,
+            cc: cc || [],
+            bcc: bcc || [],
+            attachments: attachments || [],
           }),
         });
 
@@ -76,7 +79,7 @@ const LiveExecution = ({ onReset }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [csvData, emailTemplate, currentUser, setSendingStatus]);
+  }, [csvData, emailTemplate, currentUser, setSendingStatus, attachments, cc, bcc]);
 
   const totalEmails = csvData.length;
   const sentCount = logs.filter(l => l.type === 'success').length;

@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.8.0",
+    "@google-cloud/storage": "^7.18.0",
     "concurrently": "^8.2.2",
     "dotenv": "^17.2.3",
     "express": "^4.19.2",
+    "multer": "^2.0.2",
     "nodemailer": "^6.9.13",
     "xlsx": "^0.18.5"
   }

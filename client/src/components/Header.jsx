@@ -1,8 +1,11 @@
 import React, { useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppStateContext } from '../context/AppStateContext';
 
 const Header = () => {
   const { currentUser, setCurrentUser } = useContext(AppStateContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('favorcito_user');
@@ -22,6 +25,16 @@ const Header = () => {
         </div>
         {currentUser && (
           <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate(location.pathname === '/campaigns' ? '/' : '/campaigns')}
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                location.pathname === '/campaigns'
+                  ? 'bg-[#01533c] text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {location.pathname === '/campaigns' ? '← Inicio' : '📋 Campañas'}
+            </button>
             <div className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-gray-50 rounded-lg border border-gray-200">
               <div className="w-8 h-8 bg-[#01533c] rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
