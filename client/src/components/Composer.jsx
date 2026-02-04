@@ -221,12 +221,30 @@ const Composer = ({ onComplete, onBack }) => {
       toast.error('Ingresa el asunto');
       return;
     }
-    // Regex to check if at least one {{variable}} is used
-    if (/{{(.*?)}}/.test(emailTemplate.body)) {
-      onComplete();
+    
+    // Get actual headers from CSV data if available, otherwise use headers from context
+    let availableHeaders = [];
+    if (csvData && csvData.length > 0) {
+      // Extract headers from actual CSV data (excluding 'email')
+      availableHeaders = Object.keys(csvData[0] || {}).filter(h => h !== 'email');
     } else {
-      toast.error('Ingresa al menos una de las variables disponibles');
+      // Fallback to headers from context if no CSV data
+      availableHeaders = Array.isArray(headers) ? headers : [];
     }
+    
+    // Only validate variables if there are headers available
+    // If no headers are available, allow proceeding without variables
+    if (availableHeaders.length > 0) {
+      // Check if at least one {{variable}} is used in subject or body
+      const hasVariables = /{{(.*?)}}/.test(emailTemplate.subject || '') || /{{(.*?)}}/.test(emailTemplate.body || '');
+      if (!hasVariables) {
+        toast.error('Ingresa al menos una de las variables disponibles');
+        return;
+      }
+    }
+    
+    // If no headers available or variables are present, proceed
+    onComplete();
   };
 
   const isVariableUsed = (variable) => {
@@ -418,7 +436,7 @@ const Composer = ({ onComplete, onBack }) => {
           
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-gray-200 overflow-y-auto overflow-x-hidden max-h-64 shadow-inner">
             {headers.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No hay variables disponibles. Sube datos primero.</p>
+              <p className="text-gray-500 text-center py-4">No hay variables disponibles.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {headers.map(header => (

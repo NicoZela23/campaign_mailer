@@ -805,7 +805,7 @@ const CampaignManager = () => {
                     </div>
                   ) : (
                     <p className="text-gray-500 text-center py-2 text-sm">
-                      No hay variables disponibles. Sube datos primero para tener variables.
+                      No hay variables disponibles. En este editor
                     </p>
                   )}
                 </div>
