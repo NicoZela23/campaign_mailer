@@ -1,6 +1,6 @@
-# Favorcito Mailer (Beta)
+# campaign Mailer (Beta)
 
-Favorcito Mailer is a monolith application designed for sending personalized mass emails. It features a React frontend and an Express backend, containerized with Docker for easy deployment on Google Cloud Run. This tool allows users to upload a list of recipients, compose a dynamic email template, and send customized emails in bulk.
+campaign Mailer is a monolith application designed for sending campaignized mass emails. It features a React frontend and an Express backend, containerized with Docker for easy deployment on Google Cloud Run. This tool allows users to upload a list of recipients, compose a dynamic email template, and send customized emails in bulk.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Favorcito Mailer is a monolith application designed for sending personalized mas
 
 ## About the Project
 
-This application is built for users who need to send personalized emails to a list of contacts. It provides a simple step-by-step interface to:
+This application is built for users who need to send campaignized emails to a list of contacts. It provides a simple step-by-step interface to:
 
 1.  **Upload recipient data** from a spreadsheet (CSV/XLSX).
 2.  **Compose a rich-text email** with dynamic placeholders.
@@ -35,7 +35,7 @@ This application is built for users who need to send personalized emails to a li
 
 -   **User Authentication**: Secure login for registered users.
 -   **Data Intake**: Upload recipient data via CSV or XLSX files.
--   **Dynamic Email Composer**: A rich-text editor (WYSIWYG) that allows the use of placeholders (e.g., `{{column_name}}`) to personalize emails.
+-   **Dynamic Email Composer**: A rich-text editor (WYSIWYG) that allows the use of placeholders (e.g., `{{column_name}}`) to campaignize emails.
 -   **Live Preview**: Preview how the email will look for each recipient with their actual data.
 -   **Test Email Functionality**: Send a test email to a specific address before starting the mass mailing.
 -   **Real-time Sending Status**: Monitor the email sending process with a live progress bar and status updates.
