@@ -63,7 +63,7 @@ const AttachmentManager = () => {
         </h3>
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="px-4 py-2 bg-[#01533c] text-white text-sm font-semibold rounded-lg hover:bg-[#014030] transition-all duration-200 shadow-md hover:shadow-lg"
+          className="px-4 py-2 bg-[#7c3aed] text-white text-sm font-semibold rounded-lg hover:bg-[#6d28d9] transition-all duration-200 shadow-md hover:shadow-lg"
         >
           + Agregar Archivo
         </button>

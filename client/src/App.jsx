@@ -29,7 +29,7 @@ const App = () => {
   return (
     <AppStateProvider>
       <Router>
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+        <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
           <AppContent />
         </div>
       </Router>

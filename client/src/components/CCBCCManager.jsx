@@ -72,19 +72,19 @@ const CCBCCManager = () => {
             }
           }}
           placeholder="email1@ejemplo.com, email2@ejemplo.com"
-          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-white text-sm"
+          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-white text-sm"
         />
         {cc.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {cc.map((email) => (
               <span
                 key={email}
-                className="inline-flex items-center px-3 py-1 bg-emerald-100 text-[#01533c] rounded-full text-sm font-medium"
+                className="inline-flex items-center px-3 py-1 bg-violet-100 text-[#7c3aed] rounded-full text-sm font-medium"
               >
                 {email}
                 <button
                   onClick={() => removeEmail(email, cc, setCC)}
-                  className="ml-2 text-[#01533c] hover:text-red-600"
+                  className="ml-2 text-[#7c3aed] hover:text-red-600"
                 >
                   ×
                 </button>
@@ -114,7 +114,7 @@ const CCBCCManager = () => {
             }
           }}
           placeholder="email1@ejemplo.com, email2@ejemplo.com"
-          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-white text-sm"
+          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-white text-sm"
         />
         {bcc.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">

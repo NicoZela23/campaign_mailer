@@ -1,7 +1,7 @@
 {
-  "name": "favorcito-mailer",
+  "name": "campaign-mailer",
   "version": "1.0.0",
-  "description": "Monolith project for Favorcito Mailer",
+  "description": "Monolith project for Campaign Mailer",
   "main": "server/index.js",
   "scripts": {
     "server": "node server/index.js",

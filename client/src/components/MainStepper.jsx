@@ -62,11 +62,11 @@ const MainStepper = () => {
       toast.success(
         (t) => (
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-[#01533c] rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-[#7c3aed] rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-xl">✓</span>
             </div>
             <div>
-              <p className="font-bold text-[#01533c]">¡Campaña completada!</p>
+              <p className="font-bold text-[#7c3aed]">¡Campaña completada!</p>
               <p className="text-sm text-gray-600">Todos los correos han sido enviados exitosamente</p>
             </div>
           </div>
@@ -76,10 +76,10 @@ const MainStepper = () => {
           position: 'top-center',
           style: {
             background: 'white',
-            border: '2px solid #01533c',
+            border: '2px solid #7c3aed',
             borderRadius: '12px',
             padding: '16px',
-            boxShadow: '0 10px 25px rgba(1, 83, 60, 0.2)',
+            boxShadow: '0 10px 25px rgba(124, 58, 237, 0.2)',
           },
         }
       );
@@ -150,15 +150,15 @@ const MainStepper = () => {
     let baseClasses = 'p-6 rounded-xl border-2 text-center transition-all duration-300 relative overflow-hidden';
     
     if (index < currentStep) {
-      baseClasses += ' border-[#01533c] bg-gradient-to-br from-emerald-50 to-green-50 shadow-md';
+      baseClasses += ' border-[#7c3aed] bg-gradient-to-br from-violet-50 to-purple-50 shadow-md';
     } else if (index === currentStep) {
-      baseClasses += ' border-[#01533c] bg-gradient-to-br from-emerald-50 to-teal-50 shadow-xl ring-4 ring-[#01533c]/20 scale-105';
+      baseClasses += ' border-[#7c3aed] bg-gradient-to-br from-violet-50 to-purple-50 shadow-xl ring-4 ring-[#7c3aed]/20 scale-105';
     } else {
       baseClasses += ' border-gray-200 bg-white/80 backdrop-blur-sm';
     }
 
     if (isClickable) {
-      baseClasses += ' cursor-pointer hover:shadow-lg hover:scale-105 hover:border-[#01533c]/50';
+      baseClasses += ' cursor-pointer hover:shadow-lg hover:scale-105 hover:border-[#7c3aed]/50';
     } else {
       baseClasses += ' cursor-not-allowed';
     }
@@ -168,8 +168,8 @@ const MainStepper = () => {
   
   const getTextColor = (index) => {
     if (isCompleted) return 'text-gray-400';
-    if (index < currentStep) return 'text-[#01533c] font-semibold';
-    if (index === currentStep) return 'text-[#01533c] font-bold';
+    if (index < currentStep) return 'text-[#7c3aed] font-semibold';
+    if (index === currentStep) return 'text-[#7c3aed] font-bold';
     return 'text-gray-500';
   }
 
@@ -201,7 +201,7 @@ const MainStepper = () => {
               </div>
               <p className={`font-semibold text-sm ${getTextColor(index)}`}>{step.name}</p>
               {index === currentStep && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#01533c]"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#7c3aed]"></div>
               )}
             </div>
           ))}
@@ -209,14 +209,14 @@ const MainStepper = () => {
         {/* Progress line - moved down with more spacing */}
         <div className="hidden md:block relative h-2 bg-gray-200 rounded-full mt-6 mb-8 mx-4">
           <div 
-            className="absolute top-0 left-0 h-full bg-[#01533c] rounded-full transition-all duration-500 shadow-sm"
+            className="absolute top-0 left-0 h-full bg-[#7c3aed] rounded-full transition-all duration-500 shadow-sm"
             style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
           ></div>
         </div>
       </div>
       
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden">
-        {!isCompleted && <div className="bg-[#01533c] h-1"></div>}
+        {!isCompleted && <div className="bg-[#7c3aed] h-1"></div>}
         <CurrentComponent 
           onComplete={handleNextStep} 
           onBack={handleBackStep}
@@ -228,7 +228,7 @@ const MainStepper = () => {
         <div className="mt-8 text-center">
           <button
             onClick={handleReset}
-            className="px-8 py-3 bg-[#01533c] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+            className="px-8 py-3 bg-[#7c3aed] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
           >
             Crear Nueva Campaña
           </button>

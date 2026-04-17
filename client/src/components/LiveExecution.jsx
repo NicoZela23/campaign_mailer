@@ -89,10 +89,10 @@ const LiveExecution = ({ onReset }) => {
   return (
     <div className="p-8 max-w-5xl mx-auto">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#01533c] rounded-2xl shadow-lg mb-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7c3aed] rounded-2xl shadow-lg mb-4">
           <span className="text-white text-3xl">🚀</span>
         </div>
-        <h2 className="text-4xl font-bold text-[#01533c] mb-2">
+        <h2 className="text-4xl font-bold text-[#7c3aed] mb-2">
           {sendingStatus !== 'completed' ? 'Enviando Correos...' : '¡Envío Completado!'}
         </h2>
         {sendingStatus === 'completed' && (
@@ -113,7 +113,7 @@ const LiveExecution = ({ onReset }) => {
               cy="50" 
             />
             <circle
-              className={`transition-all duration-500 ${sendingStatus === 'completed' ? 'text-[#01533c]' : 'text-[#01533c]'}`}
+              className={`transition-all duration-500 ${sendingStatus === 'completed' ? 'text-[#7c3aed]' : 'text-[#7c3aed]'}`}
               strokeWidth="8"
               strokeDasharray={`${(2 * Math.PI * 45 * displayProgress) / 100}, 999`}
               strokeLinecap="round"
@@ -125,7 +125,7 @@ const LiveExecution = ({ onReset }) => {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`text-6xl font-bold text-[#01533c]`}>
+            <span className={`text-6xl font-bold text-[#7c3aed]`}>
               {`${displayProgress}%`}
             </span>
             <span className="text-sm text-gray-500 mt-2">
@@ -135,9 +135,9 @@ const LiveExecution = ({ onReset }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full lg:w-auto">
-          <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl border-2 border-[#01533c]/30 shadow-md">
-            <div className="text-3xl font-bold text-[#01533c] mb-1">{sentCount}</div>
-            <div className="text-sm font-semibold text-[#01533c]/80">Enviados</div>
+          <div className="bg-gradient-to-br from-violet-50 to-purple-50 p-6 rounded-xl border-2 border-[#7c3aed]/30 shadow-md">
+            <div className="text-3xl font-bold text-[#7c3aed] mb-1">{sentCount}</div>
+            <div className="text-sm font-semibold text-[#7c3aed]/80">Enviados</div>
           </div>
           <div className="bg-gradient-to-br from-red-50 to-pink-50 p-6 rounded-xl border-2 border-red-200 shadow-md">
             <div className="text-3xl font-bold text-red-700 mb-1">{failedCount}</div>
@@ -146,7 +146,7 @@ const LiveExecution = ({ onReset }) => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-50 to-emerald-50 border-2 border-gray-200 rounded-xl p-6 shadow-lg">
+      <div className="bg-gradient-to-br from-gray-50 to-violet-50 border-2 border-gray-200 rounded-xl p-6 shadow-lg">
         <div className="mb-4">
           <h3 className="text-lg font-bold text-gray-800 flex items-center mb-3">
             <span className="mr-2">📋</span>
@@ -159,7 +159,7 @@ const LiveExecution = ({ onReset }) => {
             </div>
             <div className="flex items-center space-x-2 text-xs text-gray-500">
               <span className="flex items-center">
-                <span className="w-2 h-2 bg-[#01533c] rounded-full mr-1"></span>
+                <span className="w-2 h-2 bg-[#7c3aed] rounded-full mr-1"></span>
                 Enviados: {sentCount}
               </span>
               <span className="flex items-center">
@@ -191,18 +191,18 @@ const LiveExecution = ({ onReset }) => {
                   key={index} 
                   className={`flex items-start p-3 rounded-lg transition-all duration-200 ${
                     log.type === 'success' 
-                      ? 'bg-emerald-50 border-l-4 border-[#01533c]' 
+                      ? 'bg-violet-50 border-l-4 border-[#7c3aed]' 
                       : 'bg-red-50 border-l-4 border-red-500'
                   }`}
                 >
-                  <span className={`mr-3 font-bold text-sm ${log.type === 'success' ? 'text-[#01533c]' : 'text-red-600'}`}>
+                  <span className={`mr-3 font-bold text-sm ${log.type === 'success' ? 'text-[#7c3aed]' : 'text-red-600'}`}>
                     {log.type === 'success' ? '✓' : '✗'}
                   </span>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                         log.type === 'success' 
-                          ? 'bg-[#01533c]/20 text-[#01533c]' 
+                          ? 'bg-[#7c3aed]/20 text-[#7c3aed]' 
                           : 'bg-red-200 text-red-800'
                       }`}>
                         {log.type.toUpperCase()}

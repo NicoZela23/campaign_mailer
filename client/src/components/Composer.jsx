@@ -365,10 +365,10 @@ const Composer = ({ onComplete, onBack }) => {
     <div className="flex flex-col p-8 gap-8">
       <div className="w-full">
         <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#01533c] rounded-xl shadow-lg mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7c3aed] rounded-xl shadow-lg mb-4">
             <span className="text-white text-2xl">✍️</span>
           </div>
-          <h2 className="text-3xl font-bold text-[#01533c] mb-2">
+          <h2 className="text-3xl font-bold text-[#7c3aed] mb-2">
             Construye el Email
           </h2>
           <p className="text-gray-500 text-sm">Crea tu plantilla de correo personalizada</p>
@@ -383,7 +383,7 @@ const Composer = ({ onComplete, onBack }) => {
             placeholder="Ej: Bienvenido a nuestra campaña"
             value={emailTemplate.subject}
             onChange={handleSubjectChange}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white text-lg"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white text-lg"
           />
         </div>
         
@@ -445,8 +445,8 @@ const Composer = ({ onComplete, onBack }) => {
                     onClick={() => insertVariable(header)}
                     className={`text-left p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 text-wrap font-medium ${
                       isVariableUsed(header) 
-                        ? 'bg-[#01533c] text-white hover:bg-[#014030]' 
-                        : 'bg-white text-gray-700 hover:bg-emerald-50 hover:text-[#01533c] border-2 border-gray-200 hover:border-[#01533c]/50'
+                        ? 'bg-[#7c3aed] text-white hover:bg-[#6d28d9]' 
+                        : 'bg-white text-gray-700 hover:bg-violet-50 hover:text-[#7c3aed] border-2 border-gray-200 hover:border-[#7c3aed]/50'
                     }`}
                     title={isVariableUsed(header) ? 'Variable en uso' : 'Haz clic para insertar'}
                   >
@@ -490,7 +490,7 @@ const Composer = ({ onComplete, onBack }) => {
             </button>
             <button 
               onClick={validateAndProceed} 
-              className="px-8 py-3 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+              className="px-8 py-3 bg-[#7c3aed] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
             >
               Continuar →
             </button>
@@ -502,11 +502,11 @@ const Composer = ({ onComplete, onBack }) => {
       {showSaveModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div 
-            className="bg-white/95 backdrop-blur-md rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border-2 border-[#01533c]/20 pointer-events-auto transform transition-all duration-200"
+            className="bg-white/95 backdrop-blur-md rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border-2 border-[#7c3aed]/20 pointer-events-auto transform transition-all duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-bold text-[#01533c]">
+              <h3 className="text-2xl font-bold text-[#7c3aed]">
                 {currentCampaignId && currentCampaignId !== 'temp' ? 'Editar Campaña' : 'Guardar Campaña'}
               </h3>
               <button
@@ -526,7 +526,7 @@ const Composer = ({ onComplete, onBack }) => {
               onChange={(e) => setCampaignName(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSaveCampaign()}
               placeholder="Nombre de la campaña"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent mb-4"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent mb-4"
               autoFocus
             />
             
@@ -538,7 +538,7 @@ const Composer = ({ onComplete, onBack }) => {
                     type="checkbox"
                     checked={saveAsNew}
                     onChange={(e) => setSaveAsNew(e.target.checked)}
-                    className="w-4 h-4 text-[#01533c] border-gray-300 rounded focus:ring-[#01533c]"
+                    className="w-4 h-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed]"
                   />
                   <span className="text-sm text-gray-700">
                     Guardar como nueva campaña (no sobrescribir la actual)
@@ -560,7 +560,7 @@ const Composer = ({ onComplete, onBack }) => {
               </button>
               <button
                 onClick={handleSaveCampaign}
-                className="px-5 py-2 bg-[#01533c] text-white font-semibold rounded-lg hover:bg-[#014030] transition-colors"
+                className="px-5 py-2 bg-[#7c3aed] text-white font-semibold rounded-lg hover:bg-[#6d28d9] transition-colors"
               >
                 {saveAsNew ? 'Guardar como Nueva' : 'Guardar'}
               </button>

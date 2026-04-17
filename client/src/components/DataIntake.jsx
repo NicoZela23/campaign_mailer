@@ -391,10 +391,10 @@ const DataIntake = ({ onComplete }) => {
   return (
     <div className="p-8">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#01533c] rounded-2xl shadow-lg mb-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7c3aed] rounded-2xl shadow-lg mb-4">
           <span className="text-white text-3xl">📤</span>
         </div>
-        <h2 className="text-3xl font-bold text-[#01533c] mb-2">
+        <h2 className="text-3xl font-bold text-[#7c3aed] mb-2">
           Subir lista de contactos
         </h2>
         <p className="text-gray-500 text-sm">Columna email obligatoria • Formatos: CSV, XLS, XLSX</p>
@@ -404,15 +404,15 @@ const DataIntake = ({ onComplete }) => {
         {...getRootProps()}
         className={`border-3 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all duration-300
         ${isDragActive 
-          ? 'border-[#01533c] bg-gradient-to-br from-emerald-50 to-green-50 shadow-xl scale-105' 
-          : 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 hover:border-[#01533c]/50 hover:shadow-lg hover:scale-[1.02]'}`}
+          ? 'border-[#7c3aed] bg-gradient-to-br from-violet-50 to-purple-50 shadow-xl scale-105' 
+          : 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 hover:border-[#7c3aed]/50 hover:shadow-lg hover:scale-[1.02]'}`}
       >
         <input {...getInputProps()} />
         <div className="text-6xl mb-4">📤</div>
         {isDragActive ? (
           <>
-            <p className="text-[#01533c] font-bold text-xl mb-2">¡Suelta el archivo aquí!</p>
-            <p className="text-[#01533c]/70 text-sm">El archivo se procesará automáticamente</p>
+            <p className="text-[#7c3aed] font-bold text-xl mb-2">¡Suelta el archivo aquí!</p>
+            <p className="text-[#7c3aed]/70 text-sm">El archivo se procesará automáticamente</p>
           </>
         ) : (
           <>
@@ -447,7 +447,7 @@ const DataIntake = ({ onComplete }) => {
               {isEditing ? (
                 <button 
                   onClick={handleSaveChanges} 
-                  className={`px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 ${hasValidationErrors ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                  className={`px-5 py-2.5 bg-[#7c3aed] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5 ${hasValidationErrors ? 'opacity-50 cursor-not-allowed' : ''}`} 
                   disabled={hasValidationErrors}
                 >
                   💾 Guardar Cambios
@@ -464,13 +464,13 @@ const DataIntake = ({ onComplete }) => {
                 <>
                   <button 
                     onClick={handleAddRow} 
-                    className="px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+                    className="px-5 py-2.5 bg-[#7c3aed] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
                   >
                     ➕ Fila
                   </button>
                   <button 
                     onClick={handleAddColumn} 
-                    className={`px-5 py-2.5 bg-[#01533c] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 ${isAddingColumn ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`px-5 py-2.5 bg-[#7c3aed] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5 ${isAddingColumn ? 'opacity-50 cursor-not-allowed' : ''}`}
                     disabled={isAddingColumn}
                   >
                     ➕ Columna
@@ -565,7 +565,7 @@ const DataIntake = ({ onComplete }) => {
                                   ? 'border-red-400 bg-red-50 focus:ring-red-500' 
                                   : isDuplicate
                                   ? 'border-yellow-400 bg-yellow-50 focus:ring-yellow-500'
-                                  : 'border-gray-300 focus:ring-[#01533c] focus:border-transparent'
+                                  : 'border-gray-300 focus:ring-[#7c3aed] focus:border-transparent'
                               }`}
                             />
                             {isDuplicate && (
@@ -617,7 +617,7 @@ const DataIntake = ({ onComplete }) => {
             {editedData.length > 0 && !isEditing && !hasValidationErrors && (
               <button 
                 onClick={handleProceed} 
-                className="px-10 py-4 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5 text-lg"
+                className="px-10 py-4 bg-[#7c3aed] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5 text-lg"
               >
                 ✓ Confirmar y Continuar
               </button>

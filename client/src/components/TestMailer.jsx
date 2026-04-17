@@ -44,16 +44,16 @@ const TestMailer = ({ onComplete, onBack }) => {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-[#01533c] rounded-xl shadow-lg mb-4">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7c3aed] rounded-xl shadow-lg mb-4">
           <span className="text-white text-2xl">🔍</span>
         </div>
-        <h2 className="text-3xl font-bold text-[#01533c] mb-2">
+        <h2 className="text-3xl font-bold text-[#7c3aed] mb-2">
           Testear Correo
         </h2>
         <p className="text-gray-500 text-sm">Envía un correo de prueba antes de lanzar la campaña completa</p>
       </div>
       
-      <div className="max-w-2xl bg-gradient-to-br from-gray-50 to-emerald-50 p-8 rounded-2xl border-2 border-gray-200 shadow-lg mb-8">
+      <div className="max-w-2xl bg-gradient-to-br from-gray-50 to-violet-50 p-8 rounded-2xl border-2 border-gray-200 shadow-lg mb-8">
         <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
           <span className="mr-2">📧</span>
           Correo de Prueba
@@ -68,19 +68,19 @@ const TestMailer = ({ onComplete, onBack }) => {
               placeholder="ejemplo@correo.com"
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-white text-lg"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-white text-lg"
             />
           </div>
           <button 
             onClick={handleTestSend} 
-            className="w-full px-6 py-3 bg-[#01533c] text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+            className="w-full px-6 py-3 bg-[#7c3aed] text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
           >
             🚀 Enviar Correo de Prueba
           </button>
         </div>
         
-        <div className="mt-6 p-4 bg-emerald-50 border-2 border-emerald-200 rounded-xl">
-          <p className="text-sm text-emerald-800 flex items-start">
+        <div className="mt-6 p-4 bg-violet-50 border-2 border-violet-200 rounded-xl">
+          <p className="text-sm text-violet-800 flex items-start">
             <span className="mr-2">💡</span>
             <span>
               <strong>Consejo:</strong> Envía el correo de prueba a tu propia dirección para verificar que todo se vea correctamente antes de enviar a todos los contactos.
@@ -98,7 +98,7 @@ const TestMailer = ({ onComplete, onBack }) => {
         </button>
         <button 
           onClick={onComplete} 
-          className="px-8 py-3 bg-[#01533c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+          className="px-8 py-3 bg-[#7c3aed] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
         >
           🚀 Enviar a Todos
         </button>

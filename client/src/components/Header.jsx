@@ -8,7 +8,7 @@ const Header = () => {
   const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem('favorcito_user');
+    localStorage.removeItem('campaign_mailer_user');
     setCurrentUser(null);
   };
 
@@ -16,11 +16,11 @@ const Header = () => {
     <header className="bg-white/80 backdrop-blur-lg shadow-lg border-b border-gray-200/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-[#01533c] rounded-lg flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 bg-[#7c3aed] rounded-lg flex items-center justify-center shadow-md">
             <span className="text-white text-xl font-bold">✉️</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#01533c]">
-            Favorcito Mailer
+          <h1 className="text-2xl font-bold text-[#7c3aed]">
+            Campaign Mailer
           </h1>
         </div>
         {currentUser && (
@@ -29,14 +29,14 @@ const Header = () => {
               onClick={() => navigate(location.pathname === '/campaigns' ? '/' : '/campaigns')}
               className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
                 location.pathname === '/campaigns'
-                  ? 'bg-[#01533c] text-white'
+                  ? 'bg-[#7c3aed] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {location.pathname === '/campaigns' ? '← Inicio' : '📋 Campañas'}
             </button>
             <div className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="w-8 h-8 bg-[#01533c] rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#7c3aed] rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-semibold">
                   {currentUser.email?.charAt(0).toUpperCase()}
                 </span>

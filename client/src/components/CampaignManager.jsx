@@ -373,10 +373,10 @@ const CampaignManager = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
       <div className="mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#01533c] rounded-2xl shadow-lg mb-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7c3aed] rounded-2xl shadow-lg mb-4">
           <span className="text-white text-3xl">📋</span>
         </div>
-        <h1 className="text-4xl font-bold text-[#01533c] mb-2">
+        <h1 className="text-4xl font-bold text-[#7c3aed] mb-2">
           Mis Campañas
         </h1>
         <p className="text-gray-500">Gestiona tus campañas guardadas</p>
@@ -389,7 +389,7 @@ const CampaignManager = () => {
           <p className="text-gray-500 mb-6">Crea tu primera campaña para comenzar</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-8 py-3 bg-[#01533c] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#014030] transition-all duration-200 transform hover:-translate-y-0.5"
+            className="px-8 py-3 bg-[#7c3aed] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#6d28d9] transition-all duration-200 transform hover:-translate-y-0.5"
           >
             Crear Nueva Campaña
           </button>
@@ -404,7 +404,7 @@ const CampaignManager = () => {
             return (
               <div
                 key={campaign.id}
-                className="bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-[#01533c]/50 transition-all duration-200 hover:shadow-xl p-6 cursor-pointer"
+                className="bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-[#7c3aed]/50 transition-all duration-200 hover:shadow-xl p-6 cursor-pointer"
                 onClick={() => handlePreview(campaign.id)}
               >
               <div className="flex items-start justify-between mb-4">
@@ -418,7 +418,7 @@ const CampaignManager = () => {
                         if (e.key === 'Enter') handleSaveEdit(campaign.id);
                         if (e.key === 'Escape') handleCancelEdit();
                       }}
-                      className="w-full px-3 py-1 border-2 border-[#01533c] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01533c] text-sm font-bold"
+                      className="w-full px-3 py-1 border-2 border-[#7c3aed] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c3aed] text-sm font-bold"
                       autoFocus
                       onClick={(e) => e.stopPropagation()}
                     />
@@ -507,8 +507,8 @@ const CampaignManager = () => {
                     disabled={isProcessing}
                     className={`flex-1 px-4 py-2 text-white font-semibold rounded-lg transition-all duration-200 ${
                       isLoading
-                        ? 'bg-[#01533c] cursor-wait'
-                        : 'bg-[#01533c] hover:bg-[#014030]'
+                        ? 'bg-[#7c3aed] cursor-wait'
+                        : 'bg-[#7c3aed] hover:bg-[#6d28d9]'
                     } disabled:opacity-50 disabled:cursor-not-allowed relative`}
                   >
                     {isLoading ? (
@@ -557,10 +557,10 @@ const CampaignManager = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-[#01533c] text-white p-6 flex items-center justify-between">
+            <div className="bg-[#7c3aed] text-white p-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">{previewCampaign.name}</h2>
-                <p className="text-emerald-100 text-sm mt-1">
+                <p className="text-violet-100 text-sm mt-1">
                   {previewCampaign.status === 'sent' ? 'Campaña Enviada' : 'Borrador'}
                 </p>
               </div>
@@ -610,7 +610,7 @@ const CampaignManager = () => {
                     {previewCampaign.headers.map((header, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg font-mono text-sm border border-emerald-200"
+                        className="px-3 py-1 bg-violet-100 text-violet-800 rounded-lg font-mono text-sm border border-violet-200"
                       >
                         {`{{${header}}}`}
                       </span>
@@ -702,8 +702,8 @@ const CampaignManager = () => {
                 disabled={loadingCampaignId === previewCampaign.id}
                 className={`px-6 py-2 text-white font-semibold rounded-lg transition-all duration-200 ${
                   loadingCampaignId === previewCampaign.id
-                    ? 'bg-[#01533c] cursor-wait'
-                    : 'bg-[#01533c] hover:bg-[#014030]'
+                    ? 'bg-[#7c3aed] cursor-wait'
+                    : 'bg-[#7c3aed] hover:bg-[#6d28d9]'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {loadingCampaignId === previewCampaign.id ? (
@@ -729,10 +729,10 @@ const CampaignManager = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-[#01533c] text-white p-6 flex items-center justify-between flex-shrink-0">
+            <div className="bg-[#7c3aed] text-white p-6 flex items-center justify-between flex-shrink-0">
               <div>
                 <h2 className="text-2xl font-bold">Crear Nueva Campaña</h2>
-                <p className="text-emerald-100 text-sm mt-1">Completa todos los campos para crear tu campaña</p>
+                <p className="text-violet-100 text-sm mt-1">Completa todos los campos para crear tu campaña</p>
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -754,7 +754,7 @@ const CampaignManager = () => {
                   value={campaignName}
                   onChange={(e) => setCampaignName(e.target.value)}
                   placeholder="Ej: Campaña de Bienvenida"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200"
                   autoFocus
                   disabled={creatingCampaign}
                 />
@@ -770,7 +770,7 @@ const CampaignManager = () => {
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
                   placeholder="Ej: Bienvenido a nuestra campaña"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200"
                   disabled={creatingCampaign}
                 />
               </div>
@@ -842,7 +842,7 @@ const CampaignManager = () => {
                   />
                   <label
                     htmlFor="modal-file-input"
-                    className="px-4 py-2 bg-[#01533c] text-white text-sm font-semibold rounded-lg hover:bg-[#014030] transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+                    className="px-4 py-2 bg-[#7c3aed] text-white text-sm font-semibold rounded-lg hover:bg-[#6d28d9] transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
                   >
                     + Agregar Archivo
                   </label>
@@ -902,7 +902,7 @@ const CampaignManager = () => {
                       setModalCC(emails);
                     }}
                     placeholder="email1@ejemplo.com, email2@ejemplo.com"
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-white text-sm"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-white text-sm"
                     disabled={creatingCampaign}
                   />
                   {modalCC.length > 0 && (
@@ -910,12 +910,12 @@ const CampaignManager = () => {
                       {modalCC.map((email, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center px-3 py-1 bg-emerald-100 text-[#01533c] rounded-full text-sm font-medium"
+                          className="inline-flex items-center px-3 py-1 bg-violet-100 text-[#7c3aed] rounded-full text-sm font-medium"
                         >
                           {email}
                           <button
                             onClick={() => setModalCC(prev => prev.filter((_, i) => i !== idx))}
-                            className="ml-2 text-[#01533c] hover:text-red-600"
+                            className="ml-2 text-[#7c3aed] hover:text-red-600"
                           >
                             ×
                           </button>
@@ -938,7 +938,7 @@ const CampaignManager = () => {
                       setModalBCC(emails);
                     }}
                     placeholder="email1@ejemplo.com, email2@ejemplo.com"
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01533c] focus:border-transparent transition-all duration-200 bg-white text-sm"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent transition-all duration-200 bg-white text-sm"
                     disabled={creatingCampaign}
                   />
                   {modalBCC.length > 0 && (
@@ -977,8 +977,8 @@ const CampaignManager = () => {
                 disabled={creatingCampaign || !campaignName.trim() || !emailSubject.trim()}
                 className={`px-6 py-2 text-white font-semibold rounded-lg transition-all duration-200 ${
                   creatingCampaign
-                    ? 'bg-[#01533c] cursor-wait'
-                    : 'bg-[#01533c] hover:bg-[#014030]'
+                    ? 'bg-[#7c3aed] cursor-wait'
+                    : 'bg-[#7c3aed] hover:bg-[#6d28d9]'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {creatingCampaign ? (
